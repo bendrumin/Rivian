@@ -1,0 +1,122 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Brand {
+  RIVIAN
+  SCOUT
+}
+
+enum ArticleCategory {
+  NEWS
+  RUMOR
+  BLOG
+  OFFICIAL_UPDATE
+  REVIEW
+  ANALYSIS
+}
+
+enum ChangeType {
+  CREATED
+  UPDATED
+  DELETED
+  CONTENT_CHANGED
+  TITLE_CHANGED
+  CATEGORY_CHANGED
+}
+
+enum JobStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum JobType {
+  RIVIAN_SUPPORT
+  NEWS_SCRAPE
+  STAGING_DISCOVERY
+  CONTENT_UPDATE
+}
+
+model Article {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  excerpt     String?
+  url         String   @unique
+  source      String
+  category    ArticleCategory
+  brand       Brand
+  tags        String[]
+  isStaging   Boolean  @default(false)
+  publishedAt DateTime
+  scrapedAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // SEO fields
+  metaTitle       String?
+  metaDescription String?
+  featuredImage   String?
+
+  // Engagement
+  viewCount Int @default(0)
+
+  @@map("articles")
+}
+
+model SupportArticle {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  url         String   @unique
+  brand       Brand
+  category    String?
+  isStaging   Boolean  @default(false)
+  lastUpdated DateTime
+  scrapedAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Change tracking
+  changes ContentChange[]
+
+  @@map("support_articles")
+}
+
+model ContentChange {
+  id               String     @id @default(cuid())
+  supportArticleId String
+  changeType       ChangeType
+  oldContent       String?
+  newContent       String?
+  oldTitle         String?
+  newTitle         String?
+  detectedAt       DateTime   @default(now())
+  
+  supportArticle   SupportArticle @relation(fields: [supportArticleId], references: [id], onDelete: Cascade)
+
+  @@map("content_changes")
+}
+
+model ScrapingJob {
+  id          String   @id @default(cuid())
+  jobType     JobType
+  status      JobStatus @default(PENDING)
+  startedAt   DateTime?
+  completedAt DateTime?
+  error       String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("scraping_jobs")
+}
