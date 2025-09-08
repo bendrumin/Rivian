@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 
-import { SimpleScraper } from '../lib/scrapers/simple-scraper'
+import { RealScraper } from '../lib/scrapers/real-scraper'
 import { ScrapingScheduler } from '../lib/scrapers/scraping-scheduler'
 
 async function main() {
@@ -11,7 +11,7 @@ async function main() {
   console.log(`📋 Job type: ${jobType}`)
 
   try {
-    const scraper = new SimpleScraper('https://rivian.com/support')
+    const scraper = new RealScraper('https://rivian.com/support')
     
     switch (jobType) {
       case 'rivian-support':

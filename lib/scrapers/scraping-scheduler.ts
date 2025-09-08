@@ -1,6 +1,6 @@
 import { JobType, JobStatus } from '@prisma/client'
 import { prisma } from '../db'
-import { SimpleScraper } from './simple-scraper'
+import { RealScraper } from './real-scraper'
 import { ScrapingResult } from './types'
 
 export class ScrapingScheduler {
@@ -99,7 +99,7 @@ export class ScrapingScheduler {
       let result: ScrapingResult
 
       // Execute the appropriate scraper
-      const scraper = new SimpleScraper('https://rivian.com/support')
+      const scraper = new RealScraper('https://rivian.com/support')
       
       switch (jobType) {
         case JobType.RIVIAN_SUPPORT:
