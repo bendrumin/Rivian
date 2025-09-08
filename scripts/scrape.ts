@@ -1,7 +1,6 @@
 #!/usr/bin/env tsx
 
-import { RivianSupportScraper } from '../lib/scrapers/rivian-support-scraper'
-import { NewsScraper } from '../lib/scrapers/news-scraper'
+import { SimpleScraper } from '../lib/scrapers/simple-scraper'
 import { ScrapingScheduler } from '../lib/scrapers/scraping-scheduler'
 
 async function main() {
@@ -12,25 +11,24 @@ async function main() {
   console.log(`📋 Job type: ${jobType}`)
 
   try {
+    const scraper = new SimpleScraper('https://rivian.com/support')
+    
     switch (jobType) {
       case 'rivian-support':
         console.log('🔍 Scraping Rivian support articles...')
-        const supportScraper = new RivianSupportScraper()
-        const supportResult = await supportScraper.scrape()
+        const supportResult = await scraper.scrapeRivianSupport()
         console.log('✅ Support scraping completed:', supportResult)
         break
 
       case 'news':
         console.log('📰 Scraping news articles...')
-        const newsScraper = new NewsScraper()
-        const newsResult = await newsScraper.scrape()
+        const newsResult = await scraper.scrapeNews()
         console.log('✅ News scraping completed:', newsResult)
         break
 
       case 'staging':
         console.log('🔍 Discovering staging content...')
-        const stagingScraper = new RivianSupportScraper()
-        const stagingResult = await stagingScraper.scrape()
+        const stagingResult = await scraper.scrapeRivianSupport()
         console.log('✅ Staging discovery completed:', stagingResult)
         break
 
