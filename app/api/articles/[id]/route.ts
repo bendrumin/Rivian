@@ -7,10 +7,7 @@ export async function GET(
 ) {
   try {
     const article = await prisma.article.findUnique({
-      where: { id: params.id },
-      include: {
-        // Add any relations if needed
-      }
+      where: { id: params.id }
     })
 
     if (!article) {

@@ -85,10 +85,10 @@ export class NewsScraper extends BaseScraper {
       articleElements.each((_, element) => {
         try {
           const $element = $(element)
-          const title = this.extractText($element, source.selectors.title)
-          const content = this.extractText($element, source.selectors.content)
-          const link = this.extractAttribute($element, source.selectors.link, 'href')
-          const dateText = this.extractText($element, source.selectors.date)
+          const title = $element.find(source.selectors.title).text().trim()
+          const content = $element.find(source.selectors.content).text().trim()
+          const link = $element.find(source.selectors.link).attr('href') || ''
+          const dateText = $element.find(source.selectors.date).text().trim()
 
           if (title && content && link) {
             const fullUrl = link.startsWith('http') ? link : `${source.url}${link}`
@@ -158,7 +158,7 @@ export class NewsScraper extends BaseScraper {
     if (text.includes('delivery') || text.includes('shipping')) tags.push('Delivery')
     if (text.includes('service') || text.includes('repair')) tags.push('Service')
 
-    return [...new Set(tags)] // Remove duplicates
+    return Array.from(new Set(tags)) // Remove duplicates
   }
 
   private parseDate(dateText: string): Date | null {

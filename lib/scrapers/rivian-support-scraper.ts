@@ -51,7 +51,7 @@ export class RivianSupportScraper extends BaseScraper {
 
       // Process and save all articles
       const allArticles = [...stagingArticles, ...regularArticles]
-      const savedArticles = await this.saveArticles(allArticles)
+      const savedCount = await this.saveArticles(allArticles)
 
       // Check for changes in existing articles
       await this.detectChanges(allArticles)
@@ -62,7 +62,7 @@ export class RivianSupportScraper extends BaseScraper {
           totalArticles: allArticles.length,
           stagingArticles: stagingArticles.length,
           regularArticles: regularArticles.length,
-          savedArticles: savedArticles.length
+          savedArticles: savedCount
         },
         metadata: {
           scrapedAt: new Date().toISOString(),
@@ -199,7 +199,7 @@ export class RivianSupportScraper extends BaseScraper {
     return undefined
   }
 
-  private extractLastUpdated($: cheerio.CheerioAPI): Date {
+  private extractLastUpdated($: any): Date {
     const dateText = this.extractText($, '.last-updated, .modified-date, .updated')
     if (dateText) {
       const date = new Date(dateText)
